@@ -39,7 +39,7 @@ $about = $db->fetchOne("SELECT * FROM about LIMIT 1");
                     <li class="nav-item"><a class="nav-link" href="index.php">Portfolio</a></li>
                     <li class="nav-item"><a class="nav-link active" href="about.php">About</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
-                    <li class="nav-item"><a class="nav-link" href="admin/">Admin</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>
                 </ul>
             </div>
         </div>

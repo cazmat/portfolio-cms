@@ -26,7 +26,9 @@ $projects = $db->fetchAll(
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+  <body>
+    <div class='portfolio-container'>
+
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
@@ -56,7 +58,7 @@ $projects = $db->fetchAll(
     </section>
 
     <!-- Portfolio Grid -->
-    <section class="py-5">
+    <section class="py-5 page-fill">
         <div class="container">
             <h2 class="text-center mb-5">My Work</h2>
             <div class="row g-4">
@@ -113,7 +115,9 @@ $projects = $db->fetchAll(
             </div>
         </div>
     </footer>
+    
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+  </body>
 </html>

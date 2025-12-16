@@ -74,12 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <a href="../index.php" class="text-muted small">← Back to Portfolio</a>
                         </div>
                         
-                        <div class="alert alert-info mt-4 small">
-                            <strong>Default credentials:</strong><br>
-                            Username: admin<br>
-                            Password: admin123<br>
-                            <em>Please change these after first login!</em>
-                        </div>
                     </div>
                 </div>
             </div>

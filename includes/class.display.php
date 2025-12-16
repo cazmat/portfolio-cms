@@ -8,7 +8,9 @@
         $site_name = $settings['site_name'];
         $html .= "<footer class='bg-dark text-white text-center py-4 mt-5'><div class='container'><p>".date("Y")." ".
           " ". htmlspecialchars($settings['site_name'] ?? 'My Portfolio') .". All rights reserved.</p><div class='social-links mt-3'>";
-          
+        if(!empty($settings['social_twitch'])) {
+          $html .= "<a href='".htmlspecialchars($settings['social_twitch'])."' class='text-white me-3'><i class='bi bi-twitch'></i></a>";
+        }
         if(!empty($settings['social_linkedin'])) {
           $html .= "<a href='".htmlspecialchars($settings['social_linkedin'])."' class='text-white me-3'>LinkedIn</a>";
         }

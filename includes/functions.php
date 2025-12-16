@@ -5,7 +5,7 @@ function isLoggedIn() {
 
 function requireLogin() {
     if (!isLoggedIn()) {
-        header('Location: ' . SITE_URL . '/admin/login.php');
+        header('Location: ' . SITE_URL . '/login.php');
         exit();
     }
 }
@@ -48,7 +48,7 @@ function login($username, $password, $db) {
 function logout() {
     session_unset();
     session_destroy();
-    header('Location: ' . SITE_URL . '/admin/login.php');
+    header('Location: ' . SITE_URL . '/login.php');
     exit();
 }
 

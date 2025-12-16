@@ -227,6 +227,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </form>
                     </div>
                 </div>
+                
+                <!-- Client Access Management -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Client Access</h5>
+                    </div>
+                    <div class="card-body">
+                        <?php
+                        // Get all clients
+                        $clients = $db->fetchAll("SELECT id, username, first_name, last_name, email, company FROM users WHERE role = 'client' ORDER BY username");
+                        
+                        // Get current access
+                        $accessList = $db->fetchAll("SELECT user_id, can_download FROM project_access WHERE project_id = ?", [$id]);
+                        $hasAccess = [];
+                        $canDownload = [];
+                        foreach ($accessList as $access) {
+                            $hasAccess[$access['user_id']] = true;
+                            $canDownload[$access['user_id']] = $access['can_download'];
+                        }
+                        ?>
+                        
+                        <?php if (empty($clients)): ?>
+                            <p class="text-muted">No client accounts exist yet. <a href="user-add.php">Create a client account</a>.</p>
+                        <?php else: ?>
+                            <form method="POST" action="project-access.php">
+                                <input type="hidden" name="project_id" value="<?php echo $id; ?>">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Client</th>
+                                                <th>Company</th>
+                                                <th>Can View</th>
+                                                <th>Can Download</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($clients as $client): ?>
+                                                <tr>
+                                                    <td>
+                                                        <?php echo htmlspecialchars(trim($client['first_name'] . ' ' . $client['last_name']) ?: $client['username']); ?>
+                                                        <br><small class="text-muted"><?php echo htmlspecialchars($client['email']); ?></small>
+                                                    </td>
+                                                    <td><?php echo htmlspecialchars($client['company'] ?: '-'); ?></td>
+                                                    <td>
+                                                        <input type="checkbox" name="access[<?php echo $client['id']; ?>]" value="1" 
+                                                               <?php echo isset($hasAccess[$client['id']]) ? 'checked' : ''; ?>>
+                                                    </td>
+                                                    <td>
+                                                        <input type="checkbox" name="download[<?php echo $client['id']; ?>]" value="1" 
+                                                               <?php echo isset($canDownload[$client['id']]) && $canDownload[$client['id']] ? 'checked' : ''; ?>>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button type="submit" class="btn btn-success">Update Access</button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </main>
         </div>
     </div>

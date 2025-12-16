@@ -10,14 +10,36 @@ function requireLogin() {
     }
 }
 
+function requireAdmin() {
+    if (!isLoggedIn() || $_SESSION['role'] !== 'admin') {
+        header('Location: ' . SITE_URL . '/client/dashboard.php');
+        exit();
+    }
+}
+
+function isAdmin() {
+    return isLoggedIn() && isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+}
+
+function isClient() {
+    return isLoggedIn() && isset($_SESSION['role']) && $_SESSION['role'] === 'client';
+}
+
 function login($username, $password, $db) {
-    $sql = "SELECT id, username, email, password FROM users WHERE username = ? OR email = ?";
+    $sql = "SELECT id, username, email, password, role, status, first_name, last_name FROM users WHERE (username = ? OR email = ?) AND status = 'active'";
     $user = $db->fetchOne($sql, [$username, $username]);
     
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['email'] = $user['email'];
+        $_SESSION['role'] = $user['role'];
+        $_SESSION['first_name'] = $user['first_name'];
+        $_SESSION['last_name'] = $user['last_name'];
+        
+        // Update last login
+        $db->query("UPDATE users SET last_login = NOW() WHERE id = ?", [$user['id']]);
+        
         return true;
     }
     return false;

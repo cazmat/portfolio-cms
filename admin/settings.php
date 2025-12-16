@@ -4,6 +4,7 @@ require_once '../includes/database.php';
 require_once '../includes/functions.php';
 
 requireLogin();
+requireAdmin();
 $db = new Database();
 
 $message = '';

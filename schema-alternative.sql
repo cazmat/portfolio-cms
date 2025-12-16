@@ -9,8 +9,16 @@ USE portfolio_cms;
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(191) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    role ENUM('admin', 'client') DEFAULT 'client',
+    status ENUM('active', 'inactive', 'pending') DEFAULT 'active',
+    company VARCHAR(200),
+    phone VARCHAR(50),
+    notes TEXT,
+    last_login DATETIME NULL,
     created_at DATETIME NULL,
     updated_at DATETIME NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -73,10 +81,23 @@ CREATE TABLE IF NOT EXISTS settings (
     updated_at DATETIME NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+-- Project Access Control (links projects to client users)
+CREATE TABLE IF NOT EXISTS project_access (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    project_id INT NOT NULL,
+    user_id INT NOT NULL,
+    can_view TINYINT(1) DEFAULT 1,
+    can_download TINYINT(1) DEFAULT 0,
+    created_at DATETIME NULL,
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_access (project_id, user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
 -- Insert default admin user (password: admin123 - CHANGE THIS!)
 -- The password hash below is for 'admin123' - PLEASE CHANGE THIS AFTER FIRST LOGIN!
-INSERT INTO users (username, email, password, created_at, updated_at) 
-VALUES ('admin', 'admin@example.com', '$2y$10$7Rq5H4zT4gzI1xGdOlBqxeF5TIUlZWQXOCGKQOKYmNPVQJvLJ9Yv6', NOW(), NOW());
+INSERT INTO users (username, email, password, first_name, last_name, role, status, created_at, updated_at) 
+VALUES ('admin', 'admin@example.com', '$2y$10$7Rq5H4zT4gzI1xGdOlBqxeF5TIUlZWQXOCGKQOKYmNPVQJvLJ9Yv6', 'Admin', 'User', 'admin', 'active', NOW(), NOW());
 
 -- Insert default about content
 INSERT INTO about (content, skills, updated_at) 

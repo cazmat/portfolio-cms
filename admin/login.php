@@ -8,7 +8,11 @@ $error = '';
 
 // Redirect if already logged in
 if (isLoggedIn()) {
-    header('Location: index.php');
+    if (isAdmin()) {
+        header('Location: index.php');
+    } else {
+        header('Location: ../client/dashboard.php');
+    }
     exit();
 }
 
@@ -20,10 +24,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($username) || empty($password)) {
         $error = 'Please enter both username and password.';
     } elseif (login($username, $password, $db)) {
-        header('Location: index.php');
+        // Redirect based on role
+        if (isAdmin()) {
+            header('Location: index.php');
+        } else {
+            header('Location: ../client/dashboard.php');
+        }
         exit();
     } else {
-        $error = 'Invalid username or password.';
+        $error = 'Invalid username or password, or account is inactive.';
     }
 }
 ?>

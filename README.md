@@ -63,14 +63,16 @@ Make sure the `uploads/` directory is writable:
 chmod 755 uploads/
 ```
 
-### 5. Access Admin Panel
+### 5. Access the System
 
-Navigate to `http://yourdomain.com/admin/` and login with:
+Navigate to `http://yourdomain.com/login.php` and login with:
 
 - **Username**: admin
 - **Password**: admin123
 
 **IMPORTANT**: Change these credentials immediately after first login!
+
+You'll be redirected to the admin panel at `/admin/` after login.
 
 ## Directory Structure
 

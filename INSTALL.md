@@ -51,9 +51,10 @@ chmod 777 uploads/
 ### 6. Test Installation
 1. Visit your website: `http://yourdomain.com`
 2. You should see the portfolio homepage (currently empty)
+3. Click "Login" in the navigation or visit `http://yourdomain.com/login.php`
 
 ### 7. Login to Admin Panel
-1. Go to: `http://yourdomain.com/admin/`
+1. Go to: `http://yourdomain.com/login.php`
 2. Use default credentials:
    - Username: `admin`
    - Password: `admin123`

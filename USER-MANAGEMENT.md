@@ -16,6 +16,13 @@ The Portfolio CMS now includes a complete user management system with role-based
 - Cannot edit or delete anything
 - Access client portal at `/client/`
 
+### Family
+- **Schedule access only** - can view work schedule
+- No project access (use public portfolio instead)
+- Cannot edit or delete anything
+- Access family portal at `/family/`
+- Ideal for: Family members who need to coordinate schedules and see availability
+
 ## Features
 
 ### For Administrators
@@ -54,15 +61,27 @@ The Portfolio CMS now includes a complete user management system with role-based
    - Company name
    - Phone number
    - Internal notes
-4. Set Role to **Client**
+4. Set Role to **Client** (for business clients) or **Family** (for family members who need schedule access)
 5. Set Status to **Active**
 6. Click **Create User**
-7. Share credentials with the client
+7. Share credentials with the client/family member
+
+**Note**: 
+- Family members can view the work schedule but not projects
+- Family members should use the public portfolio to view work
+- Clients can view only projects assigned to them
 
 ### Method 2: Self-Registration (Future Feature)
 Can be implemented to allow clients to register themselves with admin approval.
 
 ## Assigning Projects to Clients
+
+**Note**: 
+- Family members don't have access to the project system - they only see the work schedule
+- Family members can view the public portfolio like any website visitor
+- Only Client users need project assignments
+
+For **Client** users only:
 
 1. Login as admin
 2. Go to **Projects** and edit a project

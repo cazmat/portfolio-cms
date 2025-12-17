@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
-    role ENUM('admin', 'client') DEFAULT 'client',
+    role ENUM('admin', 'client', 'family') DEFAULT 'client',
     status ENUM('active', 'inactive', 'pending') DEFAULT 'active',
     company VARCHAR(200),
     phone VARCHAR(50),
@@ -92,6 +92,26 @@ CREATE TABLE IF NOT EXISTS project_access (
     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE KEY unique_access (project_id, user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Work Schedule (visible to Admin and Family only)
+CREATE TABLE IF NOT EXISTS schedule (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    event_date DATE NOT NULL,
+    start_time TIME NULL,
+    end_time TIME NULL,
+    location VARCHAR(200),
+    event_type ENUM('meeting', 'deadline', 'shoot', 'event', 'work', 'reminder', 'other') DEFAULT 'event',
+    status ENUM('scheduled', 'completed', 'cancelled') DEFAULT 'scheduled',
+    is_private TINYINT(1) DEFAULT 0,
+    color VARCHAR(7) DEFAULT '#3788d8',
+    notes TEXT,
+    created_by INT,
+    created_at DATETIME NULL,
+    updated_at DATETIME NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Insert default admin user (password: admin123 - CHANGE THIS!)

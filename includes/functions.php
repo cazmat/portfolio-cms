@@ -25,6 +25,10 @@ function isClient() {
     return isLoggedIn() && isset($_SESSION['role']) && $_SESSION['role'] === 'client';
 }
 
+function isFamily() {
+    return isLoggedIn() && isset($_SESSION['role']) && $_SESSION['role'] === 'family';
+}
+
 function login($username, $password, $db) {
     $sql = "SELECT id, username, email, password, role, status, first_name, last_name FROM users WHERE (username = ? OR email = ?) AND status = 'active'";
     $user = $db->fetchOne($sql, [$username, $username]);

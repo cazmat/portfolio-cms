@@ -18,6 +18,7 @@ if (isAdmin()) {
     $project = $db->fetchOne("SELECT * FROM projects WHERE id = ?", [$id]);
     $canDownload = true;
 } else {
+    // Clients need explicit access
     $sql = "SELECT p.*, pa.can_download 
             FROM projects p
             INNER JOIN project_access pa ON p.id = pa.project_id

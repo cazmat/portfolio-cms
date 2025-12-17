@@ -12,7 +12,7 @@ if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
     // Prevent deleting yourself
     if ($id !== $_SESSION['user_id']) {
-        $db->query("DELETE FROM users WHERE id = ? AND role = 'client'", [$id]);
+        $db->query("DELETE FROM users WHERE id = ? AND role IN ('client', 'family')", [$id]);
         header('Location: users.php?msg=deleted');
         exit();
     }
@@ -39,6 +39,8 @@ if ($filter === 'admin') {
     $sql .= " WHERE role = 'admin'";
 } elseif ($filter === 'client') {
     $sql .= " WHERE role = 'client'";
+} elseif ($filter === 'family') {
+    $sql .= " WHERE role = 'family'";
 } elseif ($filter === 'active') {
     $sql .= " WHERE status = 'active'";
 } elseif ($filter === 'inactive') {
@@ -89,6 +91,7 @@ $users = $db->fetchAll($sql, $params);
                         <a href="?filter=all" class="btn btn-outline-primary <?php echo $filter === 'all' ? 'active' : ''; ?>">All Users</a>
                         <a href="?filter=admin" class="btn btn-outline-primary <?php echo $filter === 'admin' ? 'active' : ''; ?>">Admins</a>
                         <a href="?filter=client" class="btn btn-outline-primary <?php echo $filter === 'client' ? 'active' : ''; ?>">Clients</a>
+                        <a href="?filter=family" class="btn btn-outline-primary <?php echo $filter === 'family' ? 'active' : ''; ?>">Family</a>
                         <a href="?filter=active" class="btn btn-outline-success <?php echo $filter === 'active' ? 'active' : ''; ?>">Active</a>
                         <a href="?filter=inactive" class="btn btn-outline-secondary <?php echo $filter === 'inactive' ? 'active' : ''; ?>">Inactive</a>
                     </div>
@@ -120,7 +123,10 @@ $users = $db->fetchAll($sql, $params);
                                                 <td><?php echo htmlspecialchars(trim($user['first_name'] . ' ' . $user['last_name'])); ?></td>
                                                 <td><?php echo htmlspecialchars($user['email']); ?></td>
                                                 <td>
-                                                    <span class="badge bg-<?php echo $user['role'] === 'admin' ? 'danger' : 'primary'; ?>">
+                                                    <span class="badge bg-<?php 
+                                                        echo $user['role'] === 'admin' ? 'danger' : 
+                                                            ($user['role'] === 'family' ? 'info' : 'primary'); 
+                                                    ?>">
                                                         <?php echo ucfirst($user['role']); ?>
                                                     </span>
                                                 </td>
@@ -145,6 +151,12 @@ $users = $db->fetchAll($sql, $params);
                                                             <a href="?delete=<?php echo $user['id']; ?>" 
                                                                class="btn btn-sm btn-outline-danger"
                                                                onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
+                                                        <?php endif; ?>
+                                                        
+                                                        <?php if ($user['role'] === 'family'): ?>
+                                                            <a href="?delete=<?php echo $user['id']; ?>" 
+                                                               class="btn btn-sm btn-outline-danger"
+                                                               onclick="return confirm('Are you sure you want to delete this family member?')">Delete</a>
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                 </td>

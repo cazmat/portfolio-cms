@@ -12,6 +12,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link <?php echo in_array(basename($_SERVER['PHP_SELF']), ['schedule.php', 'schedule-add.php', 'schedule-edit.php']) ? 'active' : ''; ?>" href="schedule.php">
+                    Schedule
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link <?php echo in_array(basename($_SERVER['PHP_SELF']), ['users.php', 'user-add.php', 'user-edit.php']) ? 'active' : ''; ?>" href="users.php">
                     Users
                 </a>

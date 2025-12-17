@@ -14,7 +14,7 @@ if (isAdmin()) {
     // Admins see all projects
     $projects = $db->fetchAll("SELECT * FROM projects ORDER BY display_order ASC, created_at DESC");
 } else {
-    // Clients only see projects they have access to
+    // Clients only see projects they have explicit access to
     $sql = "SELECT p.*, pa.can_download 
             FROM projects p
             INNER JOIN project_access pa ON p.id = pa.project_id

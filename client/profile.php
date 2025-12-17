@@ -203,7 +203,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="card-body">
                         <p><strong>Username:</strong><br><?php echo htmlspecialchars($user['username']); ?></p>
                         <p><strong>Account Type:</strong><br>
-                            <span class="badge bg-<?php echo $user['role'] === 'admin' ? 'danger' : 'primary'; ?>">
+                            <span class="badge bg-<?php 
+                                echo $user['role'] === 'admin' ? 'danger' : 
+                                    ($user['role'] === 'family' ? 'info' : 'primary'); 
+                            ?>">
                                 <?php echo ucfirst($user['role']); ?>
                             </span>
                         </p>

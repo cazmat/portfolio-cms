@@ -163,8 +163,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <label for="role" class="form-label">Role *</label>
                                         <select class="form-select" id="role" name="role">
                                             <option value="client" <?php echo $user['role'] === 'client' ? 'selected' : ''; ?>>Client</option>
+                                            <option value="family" <?php echo $user['role'] === 'family' ? 'selected' : ''; ?>>Family</option>
                                             <option value="admin" <?php echo $user['role'] === 'admin' ? 'selected' : ''; ?>>Admin</option>
                                         </select>
+                                        <small class="text-muted">Family members can view all published projects</small>
                                     </div>
                                     
                                     <div class="mb-3">

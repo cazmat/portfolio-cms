@@ -28,8 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = 'Please enter a valid email address.';
         $messageType = 'error';
     } else {
-        $sql = "INSERT INTO messages (name, email, subject, message, created_at) VALUES (?, ?, ?, ?, NOW())";
-        if ($db->query($sql, [$name, $email, $subject, $messageText])) {
+        // Check for spam
+        $spamStatus = checkSpamEmail($email, $db);
+        
+        $sql = "INSERT INTO messages (name, email, subject, message, spam_status, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
+        if ($db->query($sql, [$name, $email, $subject, $messageText, $spamStatus])) {
             $message = 'Thank you for your message! We will get back to you soon.';
             $messageType = 'success';
         } else {

@@ -38,6 +38,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'whitelist.php' ? 'active' : ''; ?>" href="whitelist.php">
+                    🛡️ Whitelist
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'settings.php' ? 'active' : ''; ?>" href="settings.php">
                     Settings
                 </a>

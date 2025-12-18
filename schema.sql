@@ -70,7 +70,11 @@ CREATE TABLE IF NOT EXISTS messages (
     subject VARCHAR(200),
     message TEXT NOT NULL,
     status ENUM('unread', 'read', 'archived') DEFAULT 'unread',
-    created_at DATETIME NULL
+    spam_status ENUM('clean', 'spam', 'suspicious') DEFAULT 'clean',
+    created_at DATETIME NULL,
+    INDEX idx_status (status),
+    INDEX idx_spam_status (spam_status),
+    INDEX idx_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Site Settings
@@ -132,3 +136,27 @@ INSERT INTO settings (setting_key, setting_value, updated_at) VALUES
 ('social_github', '', NOW()),
 ('social_twitter', '', NOW()),
 ('items_per_page', '9', NOW());
+
+-- Remember Me Tokens (for persistent login)
+CREATE TABLE IF NOT EXISTS remember_tokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(64) NOT NULL,
+    expiry INT NOT NULL,
+    created_at DATETIME NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_token (token),
+    INDEX idx_expiry (expiry)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Email Whitelist (trusted senders)
+CREATE TABLE IF NOT EXISTS email_whitelist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(191) NOT NULL UNIQUE,
+    name VARCHAR(100),
+    notes TEXT,
+    added_by INT,
+    created_at DATETIME NULL,
+    FOREIGN KEY (added_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;

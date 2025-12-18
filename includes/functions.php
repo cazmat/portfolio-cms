@@ -49,7 +49,129 @@ function login($username, $password, $db) {
     return false;
 }
 
+function setRememberMe($user_id, $db) {
+    // Generate a secure random token
+    $token = bin2hex(random_bytes(32));
+    $expiry = time() + (30 * 24 * 60 * 60); // 30 days
+    
+    // Store token in database
+    $db->query(
+        "INSERT INTO remember_tokens (user_id, token, expiry, created_at) VALUES (?, ?, FROM_UNIXTIME(?), NOW())",
+        [$user_id, hash('sha256', $token), $expiry]
+    );
+    
+    // Set cookie (store unhashed token in cookie)
+    setcookie('remember_token', $token, $expiry, '/', '', true, true);
+}
+
+function checkRememberMe($db) {
+    if (!isset($_COOKIE['remember_token'])) {
+        return false;
+    }
+    
+    $token = $_COOKIE['remember_token'];
+    $hashedToken = hash('sha256', $token);
+    
+    // Look up token in database
+    $sql = "SELECT rt.user_id, u.username, u.email, u.role, u.first_name, u.last_name, u.status
+            FROM remember_tokens rt
+            INNER JOIN users u ON rt.user_id = u.id
+            WHERE rt.token = ? AND rt.expiry > UNIX_TIMESTAMP() AND u.status = 'active'";
+    
+    $result = $db->fetchOne($sql, [$hashedToken]);
+    
+    if ($result) {
+        // Valid token - log user in
+        $_SESSION['user_id'] = $result['user_id'];
+        $_SESSION['username'] = $result['username'];
+        $_SESSION['email'] = $result['email'];
+        $_SESSION['role'] = $result['role'];
+        $_SESSION['first_name'] = $result['first_name'];
+        $_SESSION['last_name'] = $result['last_name'];
+        
+        // Update last login
+        $db->query("UPDATE users SET last_login = NOW() WHERE id = ?", [$result['user_id']]);
+        
+        return true;
+    }
+    
+    // Invalid or expired token - remove cookie
+    setcookie('remember_token', '', time() - 3600, '/', '', true, true);
+    return false;
+}
+
+function clearRememberMe($user_id, $db) {
+    if (isset($_COOKIE['remember_token'])) {
+        $token = $_COOKIE['remember_token'];
+        $hashedToken = hash('sha256', $token);
+        
+        // Delete from database
+        $db->query("DELETE FROM remember_tokens WHERE user_id = ? AND token = ?", [$user_id, $hashedToken]);
+        
+        // Delete cookie
+        setcookie('remember_token', '', time() - 3600, '/', '', true, true);
+    }
+}
+
+function checkSpamEmail($email, $db) {
+    // Check whitelist first - whitelisted emails are always clean
+    $whitelisted = $db->fetchOne(
+        "SELECT id FROM email_whitelist WHERE email = ?",
+        [$email]
+    );
+    
+    if ($whitelisted) {
+        return 'clean';
+    }
+    
+    // Check if this email has submitted messages before
+    $count = $db->fetchOne(
+        "SELECT COUNT(*) as count FROM messages WHERE email = ?",
+        [$email]
+    );
+    
+    if ($count && $count['count'] > 0) {
+        // Email exists in database - mark as spam
+        return 'spam';
+    }
+    
+    // Check for suspicious patterns
+    $email = strtolower($email);
+    
+    // Common spam email patterns
+    $spamPatterns = [
+        'temp',
+        'disposable',
+        'throwaway',
+        'fake',
+        'spam',
+        '10minutemail',
+        'guerrillamail',
+        'mailinator',
+        'maildrop',
+        'tempmail'
+    ];
+    
+    foreach ($spamPatterns as $pattern) {
+        if (strpos($email, $pattern) !== false) {
+            return 'suspicious';
+        }
+    }
+    
+    return 'clean';
+}
+
 function logout() {
+    // Clear remember me token if exists
+    if (isset($_SESSION['user_id'])) {
+        global $db;
+        if (!isset($db)) {
+            require_once __DIR__ . '/database.php';
+            $db = new Database();
+        }
+        clearRememberMe($_SESSION['user_id'], $db);
+    }
+    
     session_unset();
     session_destroy();
     header('Location: ' . SITE_URL . '/login.php');

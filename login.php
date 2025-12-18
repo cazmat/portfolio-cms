@@ -24,10 +24,16 @@ if (isLoggedIn()) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = sanitizeInput($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
+    $remember = isset($_POST['remember_me']);
     
     if (empty($username) || empty($password)) {
         $error = 'Please enter both username and password.';
     } elseif (login($username, $password, $db)) {
+        // Set remember me cookie if checked
+        if ($remember) {
+            setRememberMe($_SESSION['user_id'], $db);
+        }
+        
         // Redirect based on role
         if (isAdmin()) {
             header('Location: admin/index.php');
@@ -66,6 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="alert alert-danger"><?php echo $error; ?></div>
                         <?php endif; ?>
                         
+                        <?php if (isset($_GET['timeout'])): ?>
+                            <div class="alert alert-warning">Your session has expired due to inactivity. Please login again.</div>
+                        <?php endif; ?>
+                        
                         <form method="POST" action="">
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username or Email</label>
@@ -75,6 +85,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
+                                <label class="form-check-label" for="remember_me">
+                                    Remember me for 30 days
+                                </label>
                             </div>
                             
                             <button type="submit" class="btn btn-primary w-100">Login</button>

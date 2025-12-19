@@ -1,6 +1,6 @@
-# Portfolio CMS
+# Personal Portfolio CMS
 
-A simple and elegant Content Management System for portfolios, built with PHP and MySQL.
+A simple Content Management System (CMS) for my personal portfolio, built with PHP and MySQL.
 
 ## Features
 

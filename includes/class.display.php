@@ -1,8 +1,26 @@
 <?php
   class Display {
+    var $settings;
+    var $page_html;
+    function load_settings() {
+      global $db;
+    
+      $settings = [];
+$settingsData = $db->fetchAll("SELECT setting_key, setting_value FROM settings");
+foreach ($settingsData as $setting) {
+    $settings[$setting['setting_key']] = $setting['setting_value'];
+}
+      $this->settings = $settings;
+    }
     function output($footer) {
       global $settings;
+      if(!$settings) {
+        $settings = $this->settings;
+      }
+      
+      
       $html = "";
+      $html .= $this->page_html;
       if($footer) {
         $year = date("Y");
         $site_name = $settings['site_name'];

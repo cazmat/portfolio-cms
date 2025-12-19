@@ -3,9 +3,18 @@ require_once '../includes/config.php';
 require_once '../includes/database.php';
 require_once '../includes/functions.php';
 
+  require("../includes/class.auth.php");
+  require("../includes/class.display.php");
+
+
 requireLogin();
 requireAdmin();
-$db = new Database();
+
+  $db = new Database();
+  $auth = new Auth;
+  $display = new Display;
+  
+  $display->load_settings();
 
 // Get statistics
 $projectCount = $db->fetchOne("SELECT COUNT(*) as count FROM projects")['count'];
@@ -29,6 +38,8 @@ $recentMessages = $db->fetchAll(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -44,7 +55,7 @@ $recentMessages = $db->fetchAll(
                 
                 <!-- Statistics Cards -->
                 <div class="row mb-4">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="card text-white bg-primary">
                             <div class="card-body">
                                 <h5 class="card-title">Total Projects</h5>
@@ -52,19 +63,11 @@ $recentMessages = $db->fetchAll(
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="card text-white bg-success">
                             <div class="card-body">
                                 <h5 class="card-title">Published Projects</h5>
                                 <h2 class="mb-0"><?php echo $publishedCount; ?></h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-white bg-warning">
-                            <div class="card-body">
-                                <h5 class="card-title">Unread Messages</h5>
-                                <h2 class="mb-0"><?php echo $messageCount; ?></h2>
                             </div>
                         </div>
                     </div>
@@ -111,54 +114,35 @@ $recentMessages = $db->fetchAll(
                         <?php endif; ?>
                     </div>
                 </div>
-                
-                <!-- Recent Messages -->
-                <div class="card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Recent Messages</h5>
-                        <a href="messages.php" class="btn btn-sm btn-primary">View All</a>
-                    </div>
-                    <div class="card-body">
-                        <?php if (empty($recentMessages)): ?>
-                            <p class="text-muted">No messages yet.</p>
-                        <?php else: ?>
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>From</th>
-                                            <th>Subject</th>
-                                            <th>Status</th>
-                                            <th>Date</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($recentMessages as $message): ?>
-                                            <tr class="<?php echo $message['status'] === 'unread' ? 'table-warning' : ''; ?>">
-                                                <td><?php echo htmlspecialchars($message['name']); ?></td>
-                                                <td><?php echo htmlspecialchars($message['subject'] ?: 'No subject'); ?></td>
-                                                <td>
-                                                    <span class="badge bg-<?php echo $message['status'] === 'unread' ? 'warning' : 'secondary'; ?>">
-                                                        <?php echo ucfirst($message['status']); ?>
-                                                    </span>
-                                                </td>
-                                                <td><?php echo formatDate($message['created_at']); ?></td>
-                                                <td>
-                                                    <a href="message-view.php?id=<?php echo $message['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php
+  
+  //
+  $display->page_html .= "<div class='row'><div class='col col-md-8'>Main Column</div><div class='col col-md-4'>Dashboard Sidebar";
+  
+  // Messages card
+  $recentUnread = $db->fetchAll("SELECT id, name, email, subject FROM messages WHERE status='unread' AND spam_status != 'spam' ORDER BY created_at DESC LIMIT 5");
+  $unreadClean = $db->fetchOne("SELECT COUNT(*) as count FROM messages WHERE status = 'unread' AND spam_status != 'spam'")['count'];
+  $unreadSpam = $db->fetchOne("SELECT COUNT(*) as count FROM messages WHERE status = 'unread' AND spam_status='spam'")['count'];
+  $display->page_html .= "<div class='card'><div class='card-header text-center'>Messages</div><div class='card-body row'><div class='col text-center'>";
+  $display->page_html .= "<span class='badge text-bg-warning'>${unreadClean} Unread</span></div><div class='col text-center'>";
+  $display->page_html .= "<span class='badge text-bg-danger'>${unreadSpam} Unread Spam</span></div></div>";
+  if(empty($recentUnread)) {
+    // Maybe add a "No messages" message?
+  } else {
+    $display->page_html .= "<ul class='list-group list-group-flush'>";
+    foreach($recentUnread as $message) {
+      $display->page_html .= "<li class='list-group-item'><div class='row'><div class='col'><div>${message['name']} ";
+      $display->page_html .= "<span class='badge text-bg-dark'>${message['email']}</span></div><div>${message['subject']}";
+      $display->page_html .= "</div></div><div class='col col-md-2 text-end'><a href='message-view.php?id=${message['id']}'><span class='badge text-bg-primary'>View</span></a></div></div><div></div></li>";
+    }
+    $display->page_html .= "</ul>";
+  }
+  $display->page_html .= "<div class='card-footer text-end'><a href='messages.php' class='card-footer-link'>View All</a></div></div>";
+  
+  
+  $display->page_html .= "</div></div>";
+  //
+  
+  $display->page_html .= "</main></div>";
+  $display->output(false);
+?>

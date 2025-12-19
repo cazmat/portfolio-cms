@@ -22,6 +22,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link <?php echo in_array(basename($_SERVER['PHP_SELF']), ['invoices.php', 'invoice-create.php', 'invoice-view.php', 'invoice-edit.php']) ? 'active' : ''; ?>" href="invoices.php">
+                    📄 Invoices
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'about.php' ? 'active' : ''; ?>" href="about.php">
                     About Page
                 </a>
@@ -40,6 +45,11 @@
             <li class="nav-item">
                 <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'whitelist.php' ? 'active' : ''; ?>" href="whitelist.php">
                     🛡️ Whitelist
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'blacklist.php' ? 'active' : ''; ?>" href="blacklist.php">
+                    🚫 Blacklist
                 </a>
             </li>
             <li class="nav-item">

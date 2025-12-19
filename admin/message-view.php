@@ -116,6 +116,9 @@ if ($message['status'] === 'unread') {
                                        class="btn btn-success">✓ Mark as Not Spam</a>
                                     <a href="messages.php?action=whitelist&id=<?php echo $message['id']; ?>" 
                                        class="btn btn-info">🛡️ Add to Whitelist</a>
+                                    <a href="messages.php?action=blacklist&id=<?php echo $message['id']; ?>" 
+                                       class="btn btn-dark"
+                                       onclick="return confirm('Block <?php echo htmlspecialchars($message['email']); ?> permanently? Future messages will be silently ignored and this message will be deleted.')">🚫 Block Email</a>
                                 <?php else: ?>
                                     <a href="messages.php?action=mark_spam&id=<?php echo $message['id']; ?>" 
                                        class="btn btn-warning">⚠️ Mark as Spam</a>

@@ -107,6 +107,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Edit Project</h1>
                     <div>
+                        <a href="project-files.php?project_id=<?php echo $id; ?>" 
+                           class="btn btn-info">📁 Files</a>
                         <a href="../project.php?slug=<?php echo htmlspecialchars($project['slug']); ?>" 
                            class="btn btn-secondary" target="_blank">Preview</a>
                         <a href="projects.php" class="btn btn-secondary">Back to Projects</a>

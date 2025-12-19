@@ -36,6 +36,18 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             // Mark message as clean
             $db->query("UPDATE messages SET spam_status = 'clean' WHERE id = ?", [$id]);
         }
+    } elseif ($action === 'blacklist') {
+        // Get message email
+        $message = $db->fetchOne("SELECT email, name FROM messages WHERE id = ?", [$id]);
+        if ($message) {
+            // Add to blacklist
+            $db->query(
+                "INSERT IGNORE INTO email_blacklist (email, reason, added_by, created_at) VALUES (?, ?, ?, NOW())",
+                [$message['email'], 'Blocked from message spam', $_SESSION['user_id']]
+            );
+            // Delete the message
+            $db->query("DELETE FROM messages WHERE id = ?", [$id]);
+        }
     }
     
     header('Location: messages.php');
@@ -154,6 +166,10 @@ $messages = $db->fetchAll($sql, $params);
                                                             <a href="?action=whitelist&id=<?php echo $message['id']; ?>" 
                                                                class="btn btn-sm btn-outline-info" 
                                                                title="Add to Whitelist">🛡️ Whitelist</a>
+                                                            <a href="?action=blacklist&id=<?php echo $message['id']; ?>" 
+                                                               class="btn btn-sm btn-outline-dark" 
+                                                               title="Block this email forever"
+                                                               onclick="return confirm('Block <?php echo htmlspecialchars($message['email']); ?> permanently? Future messages will be silently ignored.')">🚫 Block</a>
                                                         <?php else: ?>
                                                             <a href="?action=mark_spam&id=<?php echo $message['id']; ?>" 
                                                                class="btn btn-sm btn-outline-danger" 

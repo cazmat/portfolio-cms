@@ -2,10 +2,8 @@
 require_once 'includes/config.php';
 require_once 'includes/database.php';
 require_once 'includes/functions.php';
-require_once('includes/class.display.php');
 
 $db = new Database();
-$display = new Display;
 
 // Get site settings
 $settings = [];
@@ -26,12 +24,9 @@ $projects = $db->fetchAll(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($settings['site_name'] ?? 'My Portfolio'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-  <body>
-    <div class='portfolio-container'>
-
+<body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
@@ -61,7 +56,7 @@ $projects = $db->fetchAll(
     </section>
 
     <!-- Portfolio Grid -->
-    <section class="py-5 page-fill">
+    <section class="py-5">
         <div class="container">
             <h2 class="text-center mb-5">My Work</h2>
             <div class="row g-4">
@@ -101,7 +96,24 @@ $projects = $db->fetchAll(
         </div>
     </section>
 
-    
-<?php
-  $display->output(true);
-?>
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($settings['site_name'] ?? 'My Portfolio'); ?>. All rights reserved.</p>
+            <div class="social-links mt-3">
+                <?php if (!empty($settings['social_linkedin'])): ?>
+                    <a href="<?php echo htmlspecialchars($settings['social_linkedin']); ?>" class="text-white me-3">LinkedIn</a>
+                <?php endif; ?>
+                <?php if (!empty($settings['social_github'])): ?>
+                    <a href="<?php echo htmlspecialchars($settings['social_github']); ?>" class="text-white me-3">GitHub</a>
+                <?php endif; ?>
+                <?php if (!empty($settings['social_twitter'])): ?>
+                    <a href="<?php echo htmlspecialchars($settings['social_twitter']); ?>" class="text-white">Twitter</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

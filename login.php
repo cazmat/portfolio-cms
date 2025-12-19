@@ -2,10 +2,8 @@
 require_once 'includes/config.php';
 require_once 'includes/database.php';
 require_once 'includes/functions.php';
-require_once('includes/class.display.php');
 
 $db = new Database();
-$display = new Display;
 $error = '';
 
 // Redirect if already logged in
@@ -55,12 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Portfolio CMS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="bg-light">
-
-<div class='portfolio-container'>
-
     <div class="container">
         <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
             <div class="col-md-5">
@@ -100,12 +94,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="text-center mt-3">
                             <a href="index.php" class="text-muted small">← Back to Portfolio</a>
                         </div>
+                        
+                        <div class="alert alert-info mt-4 small">
+                            <strong>Default admin credentials:</strong><br>
+                            Username: admin<br>
+                            Password: admin123<br>
+                            <em>Please change these after first login!</em>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-<?php
-  $display->output(false);
-?>
+</body>
+</html>
